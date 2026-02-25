@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -58,24 +59,64 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      {open && (
-        <div className="md:hidden mt-4 flex flex-col gap-4 text-sm font-medium">
-          {links.map((link) => (
+      <AnimatePresence>
+  {open && (
+    <motion.div
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: "auto", opacity: 1 }}
+      exit={{ height: 0, opacity: 0 }}
+      transition={{
+        duration: 0.35,
+        ease: [0.22, 1, 0.36, 1], // smooth cubic bezier
+      }}
+      className="overflow-hidden md:hidden"
+    >
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        exit="hidden"
+        variants={{
+          visible: {
+            transition: {
+              staggerChildren: 0.07,
+            },
+          },
+        }}
+        className="mt-4 flex flex-col gap-4 text-sm font-medium"
+      >
+        {links.map((link) => (
+          <motion.div
+            key={link.name}
+            variants={{
+              hidden: { opacity: 0, y: -10 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.3 }}
+          >
             <Link
-              key={link.name}
               href={link.link}
               onClick={() => setOpen(false)}
               className="hover:underline"
             >
               {link.name}
             </Link>
-          ))}
+          </motion.div>
+        ))}
 
-          <button className="border border-gray-300 rounded-lg px-6 py-2 text-sm mt-2">
-            Get started free
-          </button>
-        </div>
-      )}
+        <motion.button
+          variants={{
+            hidden: { opacity: 0, y: -10 },
+            visible: { opacity: 1, y: 0 },
+          }}
+          transition={{ duration: 0.3 }}
+          className="border border-gray-300 rounded-lg px-6 py-2 text-sm mt-2"
+        >
+          Get started free
+        </motion.button>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
     </nav>
   );
 }
